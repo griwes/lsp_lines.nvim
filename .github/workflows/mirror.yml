@@ -1,0 +1,32 @@
+name: mirror-upstream
+run-name: Mirror upstream repository
+
+on:
+  schedule:
+    - cron: '* 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+ 
+      - name: Import changes from upstream
+        uses: repo-sync/github-sync@v2
+        with:
+          source_repo: 'https://git.sr.ht/~whynothugo/lsp_lines.nvim'
+          source_branch: main
+          destination_branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Merge changes from upstream into the patched branch
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: main
+          target_branch: griwes-patched
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
