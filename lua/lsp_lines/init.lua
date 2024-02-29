@@ -35,6 +35,10 @@ M.setup = function()
     ---@param diagnostics table
     ---@param opts boolean|Opts
     show = function(namespace, bufnr, diagnostics, opts)
+      if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+      end
+
       local ns = vim.diagnostic.get_namespace(namespace)
       if not ns.user_data.virt_lines_ns then
         ns.user_data.virt_lines_ns = vim.api.nvim_create_namespace("")
