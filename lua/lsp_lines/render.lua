@@ -176,12 +176,7 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
         -- c. Is just one line.
         -- d. Is not an overlap.
 
-        local msg
-        if diagnostic.code then
-          msg = string.format("%s: %s", diagnostic.code, diagnostic.message)
-        else
-          msg = diagnostic.message
-        end
+        local msg = diagnostic.message
         for msg_line in msg:gmatch("([^\n]+)") do
           local vline = {}
           vim.list_extend(vline, left)
@@ -197,6 +192,7 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
             center = { { "      ", empty_space_hi } }
           end
         end
+        vim.list_extend(virt_lines[#virt_lines], { { string.format(" [%s]", diagnostic.code), "Comment" } })
       end
     end
 

@@ -44,14 +44,16 @@ M.setup = function()
         ns.user_data.virt_lines_ns = vim.api.nvim_create_namespace("")
       end
 
-      vim.api.nvim_clear_autocmds({ group = "LspLines" })
+      local augroup = string.format("LspLines%d", bufnr)
+
+      vim.api.nvim_create_augroup(augroup, { clear = true })
       if opts.virtual_lines.only_current_line then
         vim.api.nvim_create_autocmd("CursorMoved", {
           buffer = bufnr,
           callback = function()
             render_current_line(diagnostics, ns.user_data.virt_lines_ns, bufnr, opts)
           end,
-          group = "LspLines",
+          group = augroup,
         })
         -- Also show diagnostics for the current line before the first CursorMoved event
         render_current_line(diagnostics, ns.user_data.virt_lines_ns, bufnr, opts)
@@ -65,7 +67,8 @@ M.setup = function()
       local ns = vim.diagnostic.get_namespace(namespace)
       if ns.user_data.virt_lines_ns then
         render.hide(ns.user_data.virt_lines_ns, bufnr)
-        vim.api.nvim_clear_autocmds({ group = "LspLines" })
+        local augroup = string.format("LspLines%d", bufnr)
+        vim.api.nvim_create_augroup(augroup, { clear = true })
       end
     end,
   }
